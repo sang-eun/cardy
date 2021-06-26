@@ -1,4 +1,4 @@
-package game.cardy.cardy
+package game.cardy
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
