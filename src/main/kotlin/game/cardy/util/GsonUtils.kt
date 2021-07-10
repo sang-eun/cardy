@@ -10,7 +10,7 @@ class GsonUtils {
             return gson.toJson(obj)
         }
 
-        fun <T> fromJson(clazz: Class<T>, obj: String): T {
+        fun <T> fromJson(obj: String, clazz: Class<T>): T {
             return gson.fromJson(obj, clazz)
         }
     }

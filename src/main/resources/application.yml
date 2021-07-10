@@ -14,3 +14,11 @@ spring:
     username: ''
     password: ''
 ---
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: 'jdbc:mysql://localhost:3306/crix'
+    username: 'crix_user'
+    password: 'crix123^'
