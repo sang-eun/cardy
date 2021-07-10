@@ -3,6 +3,7 @@ package game.cardy.domain.message
 import game.cardy.annotation.Message
 import game.cardy.domain.ChatRooms
 import game.cardy.domain.Player
+import game.cardy.domain.dto.EventDistributionDto
 
 @Message
 class NormalMessage(player: Player, private val content: String, chatRooms: ChatRooms) : MessageFrame(player, chatRooms) {
@@ -10,7 +11,7 @@ class NormalMessage(player: Player, private val content: String, chatRooms: Chat
     override fun processPlayerRequest() {
     }
 
-    override fun getProcessedContent(): String {
-        return content
+    override fun getProcessedContent(): EventDistributionDto {
+        return EventDistributionDto("CHAT", player.name, content)
     }
 }

@@ -2,6 +2,7 @@ package game.cardy.cardy
 
 import com.google.gson.Gson
 import game.cardy.controller.ChatHandler
+import game.cardy.domain.dto.EventDistributionDto
 import game.cardy.domain.dto.MessageResponseDto
 import game.cardy.domain.message.EnterMessage
 import game.cardy.util.GsonUtils
@@ -48,7 +49,8 @@ class ChatHandlerTest {
         val hostSession = createSession(hostMessageQueue)
         hostSession.sendMessage(createRoomMessage("ENTER", "host"))
         Thread.sleep(1000)
-        var messageResponse = GsonUtils.fromJson(hostMessageQueue.poll(), MessageResponseDto::class.java)
+
+        val messageResponse = GsonUtils.fromJson(hostMessageQueue.poll(), MessageResponseDto::class.java)
         assert(messageResponse.result == "success")
         val roomId = messageResponse.roomId
 
@@ -56,7 +58,16 @@ class ChatHandlerTest {
         val playerSession = createSession(player1MessageQueue)
         playerSession.sendMessage(enterRoomMessage("ENTER", "player1", roomId!!))
         Thread.sleep(1000)
-//        messageResponse = GsonUtils.fromJson(hostMessageQueue.poll(), MessageResponseDto::class.java)
+
+        var chatMessageResponse = GsonUtils.fromJson(hostMessageQueue.poll(), EventDistributionDto::class.java)
+        assert(chatMessageResponse.event == "ENTER")
+
+        // player1 채팅
+        playerSession.sendMessage(chatMessage("CHAT", "안녕하세요", roomId))
+        Thread.sleep(1000)
+
+        chatMessageResponse = GsonUtils.fromJson(hostMessageQueue.poll(), EventDistributionDto::class.java)
+        assert(chatMessageResponse.event == "CHAT")
     }
 
     fun createSession(queue: BlockingQueue<String>): WebSocketSession {
@@ -70,6 +81,10 @@ class ChatHandlerTest {
 
     fun enterRoomMessage(messageType: String, playerName: String, roomId: String): WebSocketMessage<String> {
         return TextMessage("{\"messageType\":\"$messageType\",\"playerName\":\"$playerName\",\"roomId\":\"$roomId\"}")
+    }
+
+    fun chatMessage(messageType: String, content: String, roomId: String): WebSocketMessage<String> {
+        return TextMessage("{\"messageType\":\"$messageType\",\"content\":\"$content\",\"roomId\":\"$roomId\"}")
     }
 
     inner class TestHandler(val queue: BlockingQueue<String>): WebSocketHandler {
