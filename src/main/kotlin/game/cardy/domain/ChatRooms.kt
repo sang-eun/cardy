@@ -8,15 +8,17 @@ import java.util.*
 @Component
 class ChatRooms {
     val sessionMap = mutableMapOf<WebSocketSession, Player>()
-    val roomIdMap = mutableMapOf<String, MutableList<Player>>()
+    val roomIdMap = mutableMapOf<String, ChatRoom>()
 
-    fun enterChannel(player: Player) {
+    fun enterChannel(player: Player): ChatRoom {
         sessionMap[player.session] = player
         if (roomIdMap[player.roomId] == null) {
-            roomIdMap[player.roomId!!] = mutableListOf(player)
-        } else {
-            roomIdMap[player.roomId]!!.add(player)
+            roomIdMap[player.roomId!!] = ChatRoom(mutableListOf(), PlayerColorPalette(), player.name)
         }
+
+        roomIdMap[player.roomId]!!.addPlayer(player)
+
+        return roomIdMap[player.roomId]!!
     }
 
     fun getNewRoomId(): String {
@@ -24,14 +26,14 @@ class ChatRooms {
     }
 
     fun getPlayer(session: WebSocketSession, playerName: String?, roomId: String? = null): Player {
-        return sessionMap[session] ?: Player(playerName!!, session, roomId)
+        return sessionMap[session] ?: Player(playerName!!, session, roomId, null)
     }
 
     fun leaveChannel(player: Player) {
         sessionMap.remove(player.session)
-        roomIdMap[player.roomId]?.remove(player)
+        roomIdMap[player.roomId]?.players!!.remove(player)
 
-        if (roomIdMap[player.roomId]?.size == 0) {
+        if (roomIdMap[player.roomId]?.players!!.size == 0) {
             roomIdMap.remove(player.roomId)
         }
     }
@@ -45,6 +47,6 @@ class ChatRooms {
     }
 
     fun getReceivers(player: Player): List<Player> {
-        return roomIdMap[player.roomId] ?: arrayListOf()
+        return roomIdMap[player.roomId]?.players ?: arrayListOf()
     }
 }

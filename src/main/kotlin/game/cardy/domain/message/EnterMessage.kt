@@ -16,8 +16,8 @@ class EnterMessage(player: Player, chatRooms: ChatRooms) : MessageFrame(player, 
             val roomId = chatRooms.getNewRoomId()
             player.roomId = roomId
         }
-        chatRooms.enterChannel(player)
-        player.session.sendMessage(TextMessage(GsonUtils.toJson(MessageResponseDto("success", player.roomId, null))))
+        val chatRoom = chatRooms.enterChannel(player)
+        player.session.sendMessage(TextMessage(GsonUtils.toJson(MessageResponseDto("success", player.roomId, null, chatRoom.toPlayerInfos()))))
     }
 
     override fun getProcessedContent(): EventDistributionDto {

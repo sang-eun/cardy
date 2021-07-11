@@ -59,15 +59,18 @@ class ChatHandlerTest {
         playerSession.sendMessage(enterRoomMessage("ENTER", "player1", roomId!!))
         Thread.sleep(1000)
 
-        var chatMessageResponse = GsonUtils.fromJson(hostMessageQueue.poll(), EventDistributionDto::class.java)
-        assert(chatMessageResponse.event == "ENTER")
+        val enterMessageResponse = GsonUtils.fromJson(player1MessageQueue.poll(), MessageResponseDto::class.java)
+        assert(enterMessageResponse.playerInfos[0].isHost)
+        assert(enterMessageResponse.playerInfos[0].name == "host")
+        val enterMessageEvent = GsonUtils.fromJson(hostMessageQueue.poll(), EventDistributionDto::class.java)
+        assert(enterMessageEvent.event == "ENTER")
 
         // player1 채팅
         playerSession.sendMessage(chatMessage("CHAT", "안녕하세요", roomId))
         Thread.sleep(1000)
 
-        chatMessageResponse = GsonUtils.fromJson(hostMessageQueue.poll(), EventDistributionDto::class.java)
-        assert(chatMessageResponse.event == "CHAT")
+        val chatMessageEvent = GsonUtils.fromJson(hostMessageQueue.poll(), EventDistributionDto::class.java)
+        assert(chatMessageEvent.event == "CHAT")
     }
 
     fun createSession(queue: BlockingQueue<String>): WebSocketSession {
