@@ -1,6 +1,9 @@
 package game.cardy.domain
 
-class ChatRoom(val players: MutableList<Player>, val playerColors: PlayerColorPalette, val host: String) {
+import java.util.*
+
+
+class ChatRoom(val players: MutableList<Player>, val playerColors: PlayerColorPalette, var host: String) {
 
     fun toPlayerInfos(): List<PlayerInfo> {
         return playerColors.palette.filter { it.playerName != null }.map {
@@ -12,5 +15,22 @@ class ChatRoom(val players: MutableList<Player>, val playerColors: PlayerColorPa
         players.add(player)
         player.color = playerColors.assignColor(player)
         return player
+    }
+
+    fun removePlayer(player: Player) {
+        players.remove(player)
+
+        if(player.name == host) {
+            chooseNewHost()
+        }
+    }
+
+    private fun chooseNewHost() {
+        if(players.isEmpty()) {
+            return
+        }
+
+        val newHostIdx = Random().nextInt(players.size)
+        host = players[newHostIdx].name
     }
 }

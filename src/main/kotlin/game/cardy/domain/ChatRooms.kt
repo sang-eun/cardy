@@ -31,7 +31,7 @@ class ChatRooms {
 
     fun leaveChannel(player: Player) {
         sessionMap.remove(player.session)
-        roomIdMap[player.roomId]?.players!!.remove(player)
+        roomIdMap[player.roomId]?.removePlayer(player)
 
         if (roomIdMap[player.roomId]?.players!!.size == 0) {
             roomIdMap.remove(player.roomId)
@@ -48,5 +48,14 @@ class ChatRooms {
 
     fun getReceivers(player: Player): List<Player> {
         return roomIdMap[player.roomId]?.players ?: arrayListOf()
+    }
+
+    fun getHost(roomId: String): String {
+        val chatRoom = roomIdMap[roomId]
+        if(chatRoom == null) {
+            // TODO 예외처리
+        }
+
+        return chatRoom!!.host
     }
 }

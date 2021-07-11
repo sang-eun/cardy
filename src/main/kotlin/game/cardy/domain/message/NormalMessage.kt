@@ -11,7 +11,7 @@ class NormalMessage(player: Player, private val content: String, chatRooms: Chat
     override fun processPlayerRequest() {
     }
 
-    override fun getProcessedContent(): EventDistributionDto {
-        return EventDistributionDto("CHAT", player.name, content)
+    override fun getProcessedContent(): List<EventDistributionDto> {
+        return listOf(EventDistributionDto("CHAT", player.name, content))
     }
 }

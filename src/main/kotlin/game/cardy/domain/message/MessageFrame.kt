@@ -8,10 +8,14 @@ import game.cardy.util.GsonUtils
 abstract class MessageFrame(protected val player: Player, protected val chatRooms: ChatRooms) {
     open fun processMessage() {
         processPlayerRequest()
-        val content = GsonUtils.toJson(getProcessedContent())
-        chatRooms.distributeMessage(player, content)
+        val events = getProcessedContent()
+
+        events.forEach {
+            val content = GsonUtils.toJson(it)
+            chatRooms.distributeMessage(player, content)
+        }
     }
 
     abstract fun processPlayerRequest()
-    abstract fun getProcessedContent(): EventDistributionDto
+    abstract fun getProcessedContent(): List<EventDistributionDto>
 }

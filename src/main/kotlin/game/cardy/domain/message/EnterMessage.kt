@@ -20,7 +20,7 @@ class EnterMessage(player: Player, chatRooms: ChatRooms) : MessageFrame(player, 
         player.session.sendMessage(TextMessage(GsonUtils.toJson(MessageResponseDto("success", player.roomId, null, chatRoom.toPlayerInfos()))))
     }
 
-    override fun getProcessedContent(): EventDistributionDto {
-        return EventDistributionDto("ENTER", player.name, "${player.name}이 입장하셨습니다.")
+    override fun getProcessedContent(): List<EventDistributionDto> {
+        return listOf(EventDistributionDto("ENTER", player.name, "${player.name}이 입장하셨습니다."))
     }
 }

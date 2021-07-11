@@ -71,6 +71,17 @@ class ChatHandlerTest {
 
         val chatMessageEvent = GsonUtils.fromJson(hostMessageQueue.poll(), EventDistributionDto::class.java)
         assert(chatMessageEvent.event == "CHAT")
+
+        // host leave로 새 호스트 선출
+        hostSession.sendMessage(leaveRoomMessage())
+        Thread.sleep(1000)
+
+        val leaveMessageEvent = GsonUtils.fromJson(player1MessageQueue.poll(), EventDistributionDto::class.java)
+        assert(leaveMessageEvent.event == "LEAVE")
+
+        val newHostMessageEvent = GsonUtils.fromJson(player1MessageQueue.poll(), EventDistributionDto::class.java)
+        assert(newHostMessageEvent.event == "NEW_HOST")
+        assert(newHostMessageEvent.playerName == "player1")
     }
 
     fun createSession(queue: BlockingQueue<String>): WebSocketSession {
@@ -88,6 +99,10 @@ class ChatHandlerTest {
 
     fun chatMessage(messageType: String, content: String, roomId: String): WebSocketMessage<String> {
         return TextMessage("{\"messageType\":\"$messageType\",\"content\":\"$content\",\"roomId\":\"$roomId\"}")
+    }
+
+    fun leaveRoomMessage(): WebSocketMessage<String> {
+        return TextMessage("{\"messageType\":\"LEAVE\"}")
     }
 
     inner class TestHandler(val queue: BlockingQueue<String>): WebSocketHandler {
