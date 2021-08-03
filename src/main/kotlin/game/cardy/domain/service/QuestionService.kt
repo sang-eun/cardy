@@ -1,5 +1,7 @@
 package game.cardy.domain.service
 
+import game.cardy.domain.dto.QuestionRequestDto
+import game.cardy.domain.dto.QuestionResponseDto
 import game.cardy.domain.dto.RuleRequestDto
 import game.cardy.domain.dto.RuleResponseDto
 import game.cardy.domain.game.GameBox
@@ -8,15 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class RuleService {
+class QuestionService {
 
     @Autowired
     lateinit var gameBox: GameBox
 
-    fun getRule(payload: String): String {
-        val ruleRequestDto = GsonUtils.fromJson(payload, RuleRequestDto::class.java)
+    fun getQuestion(payload: String): String {
+        val questionRequestDto = GsonUtils.fromJson(payload, QuestionRequestDto::class.java)
 
         return GsonUtils.toJson(
-            RuleResponseDto(gameBox.getGameByType(ruleRequestDto.gameType).getRule()))
+            QuestionResponseDto(gameBox.getGameByType(questionRequestDto.gameType).getQuestion())
+        )
     }
 }
