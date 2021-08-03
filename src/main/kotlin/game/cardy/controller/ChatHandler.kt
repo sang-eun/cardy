@@ -7,6 +7,7 @@ import game.cardy.domain.dto.MessageRequestDto
 import game.cardy.domain.message.EnterMessage
 import game.cardy.domain.message.LeaveMessage
 import game.cardy.domain.message.NormalMessage
+import game.cardy.util.GsonUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.handler.TextWebSocketHandler
@@ -22,11 +23,10 @@ class ChatHandler: TextWebSocketHandler() {
 
     @Autowired
     private lateinit var chatRooms: ChatRooms
-    private val gson = Gson()
 
     @Throws(Exception::class)
     override fun handleTextMessage(session: WebSocketSession, textMessage: TextMessage) {
-        val messageRequestDto = gson.fromJson(textMessage.payload, MessageRequestDto::class.java)
+        val messageRequestDto = GsonUtils.fromJson(textMessage.payload, MessageRequestDto::class.java)
         val sender = chatRooms.getPlayer(session, messageRequestDto.playerName, messageRequestDto.roomId)
 
         val message = when(messageRequestDto.messageType) {
